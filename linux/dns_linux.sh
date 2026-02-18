@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# ==============================================================================
-# GESTOR INFRAESTRUCTURA V4: FINAL (DEBIAN/UBUNTU)
-# ==============================================================================
-
 # COLORES
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -132,7 +128,7 @@ EOF
 }
 
 # =========================
-# 3. CONFIGURACIÓN DHCP (FULL)
+# 3. CONFIGURACIÓN DHCP
 # =========================
 
 configurar_dhcp() {
@@ -143,7 +139,6 @@ configurar_dhcp() {
     fi
 
     echo -e "\n${YELLOW}--- CONFIGURAR SCOPE DHCP ---${NC}"
-    # --- AQUI ESTA LA OPCION QUE PEDISTE (NOMBRE DEL AMBITO) ---
     read -p "Nombre del Ámbito DHCP (ej. Laboratorio): " scope_name
     
     read -p "IP Inicial (ej. 192.168.10.100): " ip_ini
@@ -165,7 +160,6 @@ configurar_dhcp() {
         ROUTER_LINE="# Sin Gateway configurado"
     fi
 
-    # Inyectamos el nombre del ambito como comentario para referencia
     cat > /etc/dhcp/dhcpd.conf <<EOF
 # Configuracion DHCP generada por Script
 # Nombre del Ambito: $scope_name
@@ -333,4 +327,5 @@ while true; do
         7) exit 0 ;;
         *) echo "Opción inválida" ;;
     esac
+
 done
