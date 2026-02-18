@@ -2,7 +2,6 @@
 # GESTOR INFRAESTRUCTURA: DHCP + DNS MULTI-ZONA (WINDOWS SERVER)
 # ==============================================================================
 
-# Variable de Interfaz: AJUSTAR SEGUN TU MAQUINA
 $INTERFACE_ALIAS = "Ethernet 2" 
 
 # =========================
@@ -33,7 +32,7 @@ function Obtener-IP-Actual {
 }
 
 # =========================
-# FUNCIONES DE GESTIÓN (INSTALACIÓN)
+# FUNCIONES DE GESTIÓN
 # =========================
 
 function Verificar-Roles {
@@ -71,7 +70,7 @@ function Instalar-Roles {
 }
 
 # =========================
-# LÓGICA DE IP ESTÁTICA (CORREGIDO)
+# LÓGICA DE IP ESTÁTICA
 # =========================
 
 function Garantizar-IP-Estatica {
@@ -118,7 +117,7 @@ function Garantizar-IP-Estatica {
 }
 
 # =========================
-# CONFIGURACIÓN DHCP (CORREGIDA Y BLINDADA)
+# CONFIGURACIÓN DHCP
 # =========================
 
 function Configurar-DHCP {
@@ -126,19 +125,14 @@ function Configurar-DHCP {
         Write-Host "Error: El rol DHCP no esta instalado." -ForegroundColor Red; return
     }
     
-    # 1. Asegurar IP estatica
     $ServerIP = Garantizar-IP-Estatica
     
-    # --- BLINDAJE ANTI-ERROR ---
-    # Convertimos a string, si vienen dos IPs pegadas, las separamos y tomamos la primera
     $ServerIP = "$ServerIP".Split(' ')[0]
     $ServerIP = $ServerIP.Trim()
-    # ---------------------------
 
     Write-Host "`n--- CONFIGURACION DEL AMBITO DHCP ---" -ForegroundColor Yellow
     $ScopeName = Read-Host "Nombre del ambito DHCP"
     
-    # 2. Inputs del Rango
     $IP_INI = ""
     do {
         $InputIP = Read-Host "IP inicial del rango (ej. 192.168.10.100)"
@@ -154,7 +148,6 @@ function Configurar-DHCP {
     $GATEWAY = Read-Host "Gateway (Enter para vacio)"
     if ($GATEWAY -ne "" -and -not (Validar-IP $GATEWAY)) { $GATEWAY = "" }
 
-    # Array limpio para Opcion 6
     $DNS_Value = [string[]]@($ServerIP)
 
     $LEASE_SEC = 28800
@@ -220,10 +213,8 @@ function Agregar-Zona {
     if ($TargetIP -eq "" -or -not (Validar-IP $TargetIP)) { $TargetIP = $ServerIP }
 
     try {
-        # Crear Zona
         Add-DnsServerPrimaryZone -Name $NombreDominio -ZoneFile "$NombreDominio.dns"
         
-        # Crear Registros (@ y www)
         Add-DnsServerResourceRecordA -ZoneName $NombreDominio -Name "." -IPv4Address $TargetIP
         Add-DnsServerResourceRecordA -ZoneName $NombreDominio -Name "www" -IPv4Address $TargetIP
         
@@ -237,7 +228,6 @@ function Agregar-Zona {
 function Eliminar-Zona {
     Write-Host "`n--- ELIMINAR ZONA DNS ---" -ForegroundColor Yellow
     
-    # Listar zonas actuales para facilitar
     $Zonas = Get-DnsServerZone | Where-Object {$_.IsDsIntegrated -eq $false -and $_.ZoneType -eq "Primary"}
     if ($Zonas.Count -eq 0) {
         Write-Host "No hay zonas primarias configuradas para eliminar." -ForegroundColor Yellow
@@ -264,7 +254,6 @@ function Menu-DNS {
     }
     
     $ServerIP = Garantizar-IP-Estatica
-    # Sanitizar IP tambien aqui por seguridad
     $ServerIP = "$ServerIP".Split(' ')[0].Trim()
 
     while ($true) {
@@ -336,4 +325,5 @@ while ($true) {
         "6" { exit }
         Default { Write-Host "Opcion invalida" -ForegroundColor Red }
     }
+
 }
