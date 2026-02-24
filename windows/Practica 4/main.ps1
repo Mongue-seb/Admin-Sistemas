@@ -1,4 +1,3 @@
-# Cargar dependencias (Encapsulamiento modular)
 . .\utils_functions.ps1
 . .\ssh_functions.ps1
 . .\dhcp_functions.ps1
@@ -31,4 +30,5 @@ while ($true) {
         "7" { exit }
         Default { Write-Host "Opcion invalida" -ForegroundColor Red }
     }
+
 }
