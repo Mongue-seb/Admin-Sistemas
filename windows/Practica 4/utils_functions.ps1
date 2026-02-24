@@ -1,6 +1,5 @@
 $global:INTERFACE_ALIAS = "Ethernet 2" 
 
-# --- ENCAPSULAMIENTO: Verificar Permisos ---
 function Check-Admin {
     if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
         Write-Host "ADVERTENCIA: Ejecuta como Administrador." -ForegroundColor Red
@@ -8,7 +7,6 @@ function Check-Admin {
     }
 }
 
-# --- ENCAPSULAMIENTO: Instalar Paquetes/Roles ---
 function Install-Role {
     param ([string]$RoleName)
     if (-not (Get-WindowsFeature -Name $RoleName).Installed) {
@@ -18,7 +16,6 @@ function Install-Role {
     }
 }
 
-# --- ENCAPSULAMIENTO: Validaciones ---
 function Validar-IP { 
     param ([string]$IP) 
     return ($IP -match "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$") 
@@ -90,4 +87,5 @@ function Ejecutar-Pruebas {
         Test-Connection -ComputerName $DomTest -Count 1 -ErrorAction Stop | Out-Null
         Write-Host "Ping OK." -ForegroundColor Green
     } catch { Write-Host "Ping fallo." -ForegroundColor Yellow }
+
 }
