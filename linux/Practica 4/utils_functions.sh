@@ -7,7 +7,6 @@ YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-# --- ENCAPSULAMIENTO: Verificar Root ---
 verificar_root() {
     if [ "$EUID" -ne 0 ]; then
         echo -e "${RED}Error: Ejecuta este script con sudo.${NC}"
@@ -15,7 +14,6 @@ verificar_root() {
     fi
 }
 
-# --- ENCAPSULAMIENTO: Instalar Paquetes ---
 instalar_paquetes() {
     local paquetes=$1
     echo -e "${YELLOW}Verificando paquetes: $paquetes ...${NC}"
@@ -24,7 +22,6 @@ instalar_paquetes() {
     echo -e "${GREEN}Paquetes instalados/actualizados.${NC}"
 }
 
-# --- ENCAPSULAMIENTO: Validaciones IP ---
 validar_ip_sintaxis() {
     if [[ $1 =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then return 0; else return 1; fi
 }
@@ -46,7 +43,6 @@ validar_ip_completa() {
     else return 1; fi # 1 = Mal formato
 }
 
-# --- HERRAMIENTAS DE RED ---
 seleccionar_interfaz() {
     clear
     echo -e "${CYAN}--- SELECCION DE INTERFAZ ---${NC}"
@@ -71,7 +67,6 @@ configurar_firewall_base() {
         ufw allow ssh > /dev/null 2>&1
         ufw reload > /dev/null 2>&1
     fi
-    # IPTABLES (Fallback)
     if command -v iptables >/dev/null 2>&1; then
         iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT > /dev/null 2>&1
         iptables -A INPUT -p tcp --dport 22 -j ACCEPT > /dev/null 2>&1
@@ -124,4 +119,5 @@ ejecutar_pruebas() {
     nslookup $dom localhost
     echo "Probando ping..."
     ping -c 2 $dom
+
 }
