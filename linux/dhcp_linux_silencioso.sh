@@ -3,7 +3,6 @@
 INET_IFACE="enp0s3"
 DHCP_IFACE="enp0s8"
 
-# FUNCION VALIDAR IPv4
 validar_ip() {
     [[ $1 =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]
 }
@@ -104,4 +103,5 @@ systemctl restart isc-dhcp-server
 # =========================
 # MONITOREO
 # =========================
+
 systemctl is-active isc-dhcp-server
